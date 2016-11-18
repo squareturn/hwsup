@@ -110,7 +110,7 @@ provisional = previous = None
 #	return the number of switch positions the hardware supports
 #
 def	positions():
-	return 6
+	return 8
 
 def	service():
 	global	provisional

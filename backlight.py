@@ -9,7 +9,7 @@ import time
 from math import copysign
 import threading
 
-level_on = 700          # level when the backlight is on
+level_on = 1020          # level when the backlight is on
 level_off = 0           # level when the backlight is off
 delay_before_off = 5.0  # if the switch isn't moved for this many seconds
                         # then dim the backlight
@@ -26,7 +26,7 @@ _thread_off = None      # background thread for turning off the backlight
 _thread_exit = False    # flag to signal thread to exit
 
 # setup the PWM output for the backlight LED
-max = 4096              # PWM max count
+max = 1024              # PWM max count
 wiringpi.wiringPiSetup()
 wiringpi.pinMode(1, 2)
 wiringpi.pwmSetRange(max)
