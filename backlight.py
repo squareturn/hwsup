@@ -1,7 +1,17 @@
 #!/usr/bin/python -u
 # Python 2.7.9
 
-# see: https://github.com/WiringPi/WiringPi-Python
+#
+# Driver for the backlight on a Newhaven Display, NHD-C12832A1Z-xxx-yyy
+# family of devices using the RasbperryPi hardware PWM.
+#
+# WiringPi-Python is used to access the hardware.  See:
+#   https://github.com/WiringPi/WiringPi-Python
+#
+# This module is intended to be imported into a larger application, but
+# can be run directly.  In which case, the argument is the duty cycle,
+# 0 - 100%, to which the brightness is set.
+#
 
 import wiringpi
 import sys

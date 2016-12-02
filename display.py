@@ -1,12 +1,24 @@
 #!/usr/bin/python
  
 #
-#  see:  http://tightdev.net/SpiDev_Doc.pdf
+# Driver for Newhaven Display, NHD-C12832A1Z-xxx-yyy family of devices.
+# These are SPI devices with a display resolution of 128 x 32, with 1
+# Bit per pixel (on or off).
+#  
+# SPI functionality is from:  http://tightdev.net/SpiDev_Doc.pdf
 #
-# Use ImageMagick:
-#   convert -list font | awk '$1 == "Font:" { print $2 }'
-#   convert -size 128x32 -background white -fill black \
-#     -gravity center label:"text" -monochrome bmp3:text.bmp
+# ImageMagick can be used to create images.  See the sample commands
+# in the scripts directory.
+#
+# This module is intended to be included in a larger application, but if
+# run interactively, provides 2 functions:
+#
+# Called with no arguments, converts the Microsoft BMP file on stdin to
+# the optimized format needed for efficient updating of the display.  Output
+# is to stdout.
+#
+# Called with one argument, that argument is a filename of an optimized
+# image to display.  (see above.)
 #
 import array
 import sys
@@ -48,25 +60,25 @@ def translate_bmp(fhandle):
   #  7: image height
   #  8: number of color planes
   #  9: number of bits per pixel
-  bmp_metadata = struct.unpack('<HiHHiiiihh', filedata[0:30])
-  log("file metadata: " + str(bmp_metadata))
-  if bmp_metadata[0] != 0x4d42:
+  magic, size, res1, res2, offset, hdrsz, width, height, colors, pixelbits = \
+      struct.unpack('<HiHHiiiihh', filedata[0:30])
+  log("file metadata: " + str([magic, size, offset, hdrsz, width, height, colors, pixelbits]))
+  if magic != 0x4d42:
     log("bad magic")
     sys.exit(1)
-  if bmp_metadata[6] != 128:
-    log("expected image width: 128.  Got: " + bmp_metadata[6])
+  if width != 128:
+    log("expected image width: 128.  Got: " + width)
     sys.exit(1)
-  if bmp_metadata[7] != 32:
-    log("expected image height: 32.  Got: " + bmp_metadata[7])
+  if height != 32:
+    log("expected image height: 32.  Got: " + height)
     sys.exit(1)
-  if bmp_metadata[9] != 1:
-    log("expected bits per pixel: 1.  Got: " + bmp_metadata[9])
+  if pixelbits != 1:
+    log("expected bits per pixel: 1.  Got: " + pixelbits)
     sys.exit(1)
-  if bmp_metadata[1] - bmp_metadata[4] != 512:
-    log("expected bytes of data: 512.  Got: " + \
-         str(bmp_metadata[1] - bmp_metadata[4]))
+  if size - offset != 512:
+    log("expected bytes of data: 512.  Got: " + str(size - offset))
     sys.exit(1)
-  data = filedata[bmp_metadata[4]:bmp_metadata[1]]
+  data = filedata[offset:size]
   data = [ ord(data[_]) for _ in range(len(data)) ]
 
   # Transform the BMP file so it's ordered the way the display
