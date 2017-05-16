@@ -21,7 +21,9 @@ cd WiringPi
 ./build
 cd -
 swig2.0 -python wiringpi.i
-python setup.py install
+
+# LDFLAGS are needed for some versions or WiringPi-Python
+LDFLAGS="-lcrypt -lrt" python setup.py install
 ```
 
 
