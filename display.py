@@ -164,14 +164,26 @@ def main():
   # on stdin, to the format required by the display hardware.  (on stdout)
   # Called with a name of a hardware ready file to display.
   #
-  if len(sys.argv) == 1:
+  argc = len(sys.argv)
+  if argc == 1:         # convert bitmap on stdin to optimized format
     graphic = translate_bmp(sys.stdin)
     data = array.array('B', graphic)
     data.write(sys.stdout)
-  else:
+  elif argc == 2:       # display the optimized image in file
     graphic = load_picture(sys.argv[1])
     initialize()
     show_picture(graphic)
+  else:                 # cycle through images. delay, image0, image1, image...
+    delay = float(sys.argv[1])
+    images = [ None for _ in range(argc-2) ]
+    for i in range(2, argc):
+      images[i-2] = load_picture(sys.argv[i])
+    initialize()
+    log("display " + str(len(images)) + " images.  ^C to exit.")
+    while True:
+      for i in range(0, argc-2):
+        show_picture(images[i])
+        time.sleep(delay)
 
 if __name__ == "__main__":
   main()
