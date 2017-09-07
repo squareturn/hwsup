@@ -19,7 +19,7 @@ import time
 from math import copysign
 import threading
 
-level_on = 1020          # level when the backlight is on
+level_on = 1020         # level when the backlight is on
 level_off = 0           # level when the backlight is off
 delay_before_off = 5.0  # if the switch isn't moved for this many seconds
                         # then dim the backlight
@@ -70,6 +70,7 @@ def _ramp(goal, step, rate):
       current = goal
     set_pwm(current)
     if _thread_exit:
+      _thread_exit = False
       return
     time.sleep(rate)
 
@@ -89,6 +90,7 @@ def _ramp_off():
   cumm = 0
   while cumm < delay_before_off:
     if _thread_exit:
+      _thread_exit = False
       return
     cumm += 0.05
     time.sleep(0.05)
@@ -104,8 +106,8 @@ def turn_on():
   if _thread_off is not None:
     print "kill backlight off thread"
     _thread_exit = True
-    _thread_off.join()
-    _thread_exit = False
+    while _thread_exit:
+      pass
 
   if _thread_on is None:
     print "backlight on"
