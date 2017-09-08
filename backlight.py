@@ -107,7 +107,7 @@ def turn_on():
     print "kill backlight off thread"
     _thread_exit = True
     while _thread_exit:
-      pass
+      time.sleep(0.05)
 
   if _thread_on is None:
     print "backlight on"
